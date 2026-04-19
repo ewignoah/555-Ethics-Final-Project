@@ -15,8 +15,10 @@ INITIAL_STATE = copy.deepcopy(game.state)
 
 
 def reset_game(seed=None):
-    game.state.clear()
-    game.state.update(copy.deepcopy(INITIAL_STATE))
+    # 🔥 FIX: use persistent state instead of clearing
+    st.session_state.game_state = copy.deepcopy(INITIAL_STATE)
+    game.state = st.session_state.game_state
+
     game.events.clear()
     if seed is not None and seed != '':
         random.seed(int(seed))
@@ -234,7 +236,7 @@ def progress_after_event():
 def render_metrics():
     s = game.state
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric('Budget', money(s['budget']))
+    c1.markdown(f"**Budget**  \n{money(s['budget'])}")
     c2.metric('Reputation', f"{s['reputation']:.0f}/100")
     c3.metric('Patient safety', f"{s['patient_safety']:.0f}/100")
     c4.metric('Training', f"{s['training_level']:.0f}/100")
@@ -258,6 +260,12 @@ def render_sidebar():
 def init_session():
     if 'phase' not in st.session_state:
         reset_game()
+
+    # 🔥 FIX: persist + rebind state every run
+    if "game_state" not in st.session_state:
+        st.session_state.game_state = copy.deepcopy(INITIAL_STATE)
+
+    game.state = st.session_state.game_state
 
 
 st.set_page_config(page_title='Hospital Admin UI', page_icon='🏥', layout='wide')
