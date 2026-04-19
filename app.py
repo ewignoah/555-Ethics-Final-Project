@@ -236,7 +236,10 @@ def progress_after_event():
 def render_metrics():
     s = game.state
     c1, c2, c3, c4 = st.columns(4)
-    c1.markdown(f"**Budget**  \n{money(s['budget'])}")
+    c1.markdown(f"""
+<div style="font-size: 0.9rem; color: rgba(49, 51, 63, 0.6);">Budget</div>
+<div style="font-size: 2rem; font-weight: 600;">{money(s['budget'])}</div>
+""", unsafe_allow_html=True)
     c2.metric('Reputation', f"{s['reputation']:.0f}/100")
     c3.metric('Patient safety', f"{s['patient_safety']:.0f}/100")
     c4.metric('Training', f"{s['training_level']:.0f}/100")
@@ -273,7 +276,6 @@ init_session()
 render_sidebar()
 
 st.title('Hospital Admin: da Vinci Adoption')
-st.write('A browser UI for your existing Python simulation. Users click through choices instead of running the console script.')
 render_metrics()
 
 with st.expander('Quarter log', expanded=True):
